@@ -1,15 +1,15 @@
-# Usa una imagen oficial de Tomcat con Java 11 (que coincide con el JDK que usaste en NetBeans)
-FROM tomcat:9.0-jdk11-openjdk
+# Imagen oficial actualizada (Eclipse Temurin) compatible con cgroupv2 en Render
+FROM tomcat:9.0-jdk11-temurin
 
-# Elimina las aplicaciones web predeterminadas de Tomcat para mayor seguridad y limpieza
+# Elimina las aplicaciones por defecto de Tomcat
 RUN rm -rf /usr/local/tomcat/webapps/*
 
-# Copia la carpeta 'build/web' de tu proyecto Ant a la carpeta de aplicaciones de Tomcat
-# Lo renombramos a ROOT para que tu app cargue directamente en la URL principal (ej. tusitio.onrender.com/)
+# Copia tu aplicación compilada a la raíz de Tomcat
 COPY MVCTienda/build/web /usr/local/tomcat/webapps/ROOT
 
-# Expone el puerto 8080 (el puerto por defecto de Tomcat)
+# Indica a Render explícitamente que solo use el puerto 8080
+ENV PORT=8080
 EXPOSE 8080
 
-# Comando para iniciar Tomcat
+# Comando de arranque de Tomcat
 CMD ["catalina.sh", "run"]
