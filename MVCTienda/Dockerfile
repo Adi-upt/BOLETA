@@ -1,15 +1,16 @@
-# Imagen oficial actualizada (Eclipse Temurin) compatible con cgroupv2 en Render
 FROM tomcat:9.0-jdk11-temurin
 
-# Elimina las aplicaciones por defecto de Tomcat
+# 1. Desactiva el puerto 8005 para eliminar el WARNING "Invalid shutdown command" en Render
+RUN sed -i 's/port="8005"/port="-1"/g' /usr/local/tomcat/conf/server.xml
+
+# 2. Limpia las aplicaciones por defecto de Tomcat
 RUN rm -rf /usr/local/tomcat/webapps/*
 
-# Copia tu aplicación compilada a la raíz de Tomcat
+# 3. Copia tu app tanto en ROOT (/) como en /MVCTienda para que ningún botón dé 404
 COPY MVCTienda/build/web /usr/local/tomcat/webapps/ROOT
+COPY MVCTienda/build/web /usr/local/tomcat/webapps/MVCTienda
 
-# Indica a Render explícitamente que solo use el puerto 8080
 ENV PORT=8080
 EXPOSE 8080
 
-# Comando de arranque de Tomcat
 CMD ["catalina.sh", "run"]
